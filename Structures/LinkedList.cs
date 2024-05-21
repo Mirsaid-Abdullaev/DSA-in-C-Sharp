@@ -15,31 +15,42 @@ namespace DSA.Structures
 
         public LinkedList(T Element)
         {
-            Head = new LinkedListNode<T>(Element, null);
+            Tail = null;
+            Head = new LinkedListNode<T>(Element, null, Tail);
         }
 
+        public LinkedList()
+        {
+            Head = null;
+            Tail = null;
+        }
         public void AddItem(T Element)
         {
-            if (Tail == null)
+            if (Tail == null && Head != null) //one element in the list
             {
-                Tail = new LinkedListNode<T>(Element, Head);
+                Tail = new LinkedListNode<T>(Element, Head, null);
                 Head.LinkNextNode(Tail);
                 return;
             }
-            if (Head != null)
+            if (Tail != null && Head != null) //populated linked list
             {
-                LinkedListNode<T> NewTail = new LinkedListNode<T>(Element, Tail);
+                LinkedListNode<T> NewTail = new LinkedListNode<T>(Element, Tail, null);
                 Tail.LinkNextNode(NewTail);
                 Tail = NewTail;
+                return;
             }
-            else //empty linked list, adding the head
+            if (Head == null && Tail == null) //empty linked list, adding the head
             {
-                Head = new LinkedListNode<T>(Element, null);
                 Tail = null;
+                Head = new LinkedListNode<T>(Element, null, Tail);
             }
         }
-        public T PopItem()
+        public T PopTailItem()
         {
+            if (Head == null) //empty linked list
+            {
+                throw new Exception("Error: empty linked list. Nothing to pop.");
+            }
             if (Tail == null) //Head is the last item left
             {
                 T Data = Head.Data;
@@ -49,14 +60,53 @@ namespace DSA.Structures
             else
             {
                 T Data = Tail.Data;
-                LinkedListNode<T> NewTail = new LinkedListNode<T>(Tail.Data, null);
-                //NewTail.LinkPrevNode
+                if (Head.NextNode == Tail) //last item is the tail
+                {
+                    Head.UnlinkNextNode();
+                    Tail = null;
+                }
+                else
+                {
+                    LinkedListNode<T> NewTail = new LinkedListNode<T>(Tail.PrevItem, Tail.PrevNode, null);
+                    Tail.PrevNode.PrevNode.LinkNextNode(NewTail);
+                    Tail = NewTail;
+                }
+                return Data;
             }
         }
+        public T PopHeadItem()
+        {
+            if (Head == null) //empty linked list
+            {
+                throw new Exception("Error: empty linked list. Nothing to pop.");
+            }
+            else //there is at least the head element
+            {
+                T Data = Head.Data;
+                if (Tail == null) //head is the last element in the list
+                {
+                    Head = null;
+                }
+                else //there is a tail element
+                {
+                    LinkedListNode<T> NewHead = new LinkedListNode<T>(Head.NextItem, null, Head.NextNode);
+                    Head.NextNode.NextNode.LinkPrevNode(NewHead);
+                    Head = NewHead;
+                }
+                return Data;
+            }
+        }
+
         public override string ToString()
         {
+            if (Head == null)
+            {
+                return "Linked list (head to tail): {}";
+            }
             return Head.ToString();
         }
+
+        
     }
     internal class LinkedListNode<T>
     {
@@ -66,13 +116,17 @@ namespace DSA.Structures
         
 
 
-        public LinkedListNode(T Data, LinkedListNode<T> PrevNode)
+        public LinkedListNode(T Data, LinkedListNode<T> PrevNode, LinkedListNode<T> NextNode)
         {
             this._Data = Data;
             _NextNode = null;
             if (PrevNode != null)
             {
                 this._PrevNode = PrevNode;
+            }
+            if (NextNode != null)
+            {
+                this._NextNode = NextNode;
             }
         }
 
@@ -159,6 +213,23 @@ namespace DSA.Structures
         public override string ToString()
         {
             return "Linked list (head to tail): {" + Traverse().ToString() + "}";
+        }
+
+        public static bool operator ==(LinkedListNode<T> a, LinkedListNode<T> b)
+        {
+            if (a.Equals(null) && b.Equals(null))
+            {
+                return true;
+            }
+            if ((a.Equals(null) && !b.Equals(null)) || (!a.Equals(null) && b.Equals(null)))
+            {
+                return false;
+            }
+            return a.Traverse() == b.Traverse();
+        }
+        public static bool operator !=(LinkedListNode<T> a, LinkedListNode<T> b)
+        {
+            return a.Traverse() != b.Traverse();
         }
     }
 }
