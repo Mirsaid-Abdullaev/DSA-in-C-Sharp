@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DSA.Structures
 {
+    /// <summary>
+    /// Queue class using a template type. Contains all queue operations: Enqueue, Dequeue, Peek, as well as DeleteLastAddedElement and Contains, and a custom ToString() override
+    /// </summary>
     internal class Queue<T>
     {
         private int RearPointer = -1;
@@ -44,7 +44,7 @@ namespace DSA.Structures
         {
             if (Items.Count > 0)
             {
-                Items.RemoveAt(FrontPointer);
+                Items.RemoveAt(RearPointer);
                 RearPointer--;
             }
         }

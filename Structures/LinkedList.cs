@@ -4,6 +4,10 @@ using System.Text;
 
 namespace DSA.Structures
 {
+    /// <summary>
+    /// Linked List class using a template type T. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     internal class LinkedList<T>
     {
         private LinkedListNode<T> Head;
@@ -19,13 +23,34 @@ namespace DSA.Structures
             if (Tail == null)
             {
                 Tail = new LinkedListNode<T>(Element, Head);
-                Head.LinkNode(Tail);
+                Head.LinkNextNode(Tail);
+                return;
+            }
+            if (Head != null)
+            {
+                LinkedListNode<T> NewTail = new LinkedListNode<T>(Element, Tail);
+                Tail.LinkNextNode(NewTail);
+                Tail = NewTail;
+            }
+            else //empty linked list, adding the head
+            {
+                Head = new LinkedListNode<T>(Element, null);
+                Tail = null;
+            }
+        }
+        public T PopItem()
+        {
+            if (Tail == null) //Head is the last item left
+            {
+                T Data = Head.Data;
+                Head = null;
+                return Data;
             }
             else
             {
-                LinkedListNode<T> NewTail = new LinkedListNode<T>(Element, Tail);
-                Tail.LinkNode(NewTail);
-                Tail = NewTail;
+                T Data = Tail.Data;
+                LinkedListNode<T> NewTail = new LinkedListNode<T>(Tail.Data, null);
+                //NewTail.LinkPrevNode
             }
         }
         public override string ToString()
@@ -35,50 +60,56 @@ namespace DSA.Structures
     }
     internal class LinkedListNode<T>
     {
-        private LinkedListNode<T> PrevNode;
-        private T Data;
-        private LinkedListNode<T> NextNode;
+        private LinkedListNode<T> _PrevNode;
+        private T _Data;
+        private LinkedListNode<T> _NextNode;
         
+
+
         public LinkedListNode(T Data, LinkedListNode<T> PrevNode)
         {
-            this.Data = Data;
-            NextNode = null;
+            this._Data = Data;
+            _NextNode = null;
             if (PrevNode != null)
             {
-                this.PrevNode = PrevNode;
+                this._PrevNode = PrevNode;
             }
         }
 
-        public void LinkNode(LinkedListNode<T> NextNode)
+        public void LinkNextNode(LinkedListNode<T> NextNode)
         {
-            this.NextNode = NextNode;
+            this._NextNode = NextNode;
+        }
+        public void LinkPrevNode(LinkedListNode<T> PrevNode)
+        {
+            this._PrevNode = PrevNode;
         }
         
         public void UnlinkNextNode()
         {
-            if (this.NextNode == null)
+            if (this._NextNode == null)
             {
                 throw new Exception("Error: no item to unlink, node not connected to any next item.");
             }
-            this.NextNode = null;
+            this._NextNode = null;
         }
         public void UnlinkPrevNode()
         {
-            if (this.PrevNode == null)
+            if (this._PrevNode == null)
             {
                 throw new Exception("Error: no item to unlink, node not connected to any previous item.");
             }
-            this.PrevNode = null;
+            this._PrevNode = null;
         }
-        public T Item
+        public T Data
         {
             get
             {
-                return Data;
+                return _Data;
             }
             set
             {
-                this.Data = value;
+                this._Data = value;
             }
         }
 
@@ -86,7 +117,15 @@ namespace DSA.Structures
         {
             get
             {
-                return PrevNode.Item;
+                return _PrevNode.Data;
+            }
+        }
+
+        public LinkedListNode<T> PrevNode
+        {
+            get
+            {
+                return this._PrevNode;
             }
         }
 
@@ -94,18 +133,26 @@ namespace DSA.Structures
         {
             get
             {
-                return NextNode.Item;
+                return _NextNode.Data;
+            }
+        }
+
+        public LinkedListNode<T> NextNode
+        {
+            get
+            {
+                return this._NextNode;
             }
         }
         public string Traverse()
         {
-            if (NextNode == null)
+            if (_NextNode == null)
             {
-                return Data.ToString();
+                return _Data.ToString();
             }
             else
             {
-                return Data.ToString() + " <=> " + NextNode.Traverse().ToString();
+                return _Data.ToString() + " <=> " + _NextNode.Traverse().ToString();
             }
         }
 

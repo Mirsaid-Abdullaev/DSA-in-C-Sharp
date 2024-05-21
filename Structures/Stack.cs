@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace DSA.Structures
 {
+    /// <summary>
+    /// Stack class made of a template type. Contains all the stack operations, Push, Peek, Pop, as well as a custom ToString() overriden method, and the ability to get the underlying stacklist
+    /// </summary>
     internal class Stack<T>
     {
         private T[] _Stack;
