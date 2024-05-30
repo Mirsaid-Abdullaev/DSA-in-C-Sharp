@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DSA.Structures
 {
@@ -10,16 +9,27 @@ namespace DSA.Structures
     /// <typeparam name="T"></typeparam>
     internal class LinkedList<T>
     {
+        /// <summary>
+        /// node that holds the head of the linked list
+        /// </summary>
         private LinkedListNode<T> Head;
+        /// <summary>
+        /// node holding the tail of the linked list
+        /// </summary>
         private LinkedListNode<T> Tail;
-
-        public LinkedListNode<T> ListHead
+        /// <summary>
+        /// public getter for the head node
+        /// </summary>
+        public LinkedListNode<T> ListHead 
         {
             get
             {
                 return Head;
             }
         }
+        /// <summary>
+        /// public getter for the tail node
+        /// </summary>
         public LinkedListNode<T> ListTail
         {
             get
@@ -27,39 +37,65 @@ namespace DSA.Structures
                 return Tail;
             }
         }
-
+        /// <summary>
+        /// constructor for the linked list with an initial element
+        /// </summary>
+        /// <param name="Element">Data item to add to the list initially</param>
         public LinkedList(T Element)
         {
             Tail = null;
             Head = new LinkedListNode<T>(Element, null, Tail);
         }
-
+        /// <summary>
+        /// constructor for the linked list from an initial collection of items
+        /// </summary>
+        /// <param name="Collection">The collection of items to add to the linked list - will be added one by one using a foreach loop</param>
+        public LinkedList(ICollection<T> Collection)
+        {
+            Tail = null;
+            Head = null;
+            foreach(T item in Collection)
+            {
+                AddItem(item);
+            }
+        }
+        /// <summary>
+        /// constructor for an empty linked list
+        /// </summary>
         public LinkedList()
         {
             Head = null;
             Tail = null;
         }
-        public void AddItem(T Element)
+        /// <summary>
+        /// Adds an element to the linked list 
+        /// </summary>
+        /// <param name="Element">The element to add to the list</param>
+        public void AddItem(T Element) 
         {
-            if (Tail == null && Head != null) //one element in the list
+            if (Tail == null && Head != null) //means that only one element in the list
             {
                 Tail = new LinkedListNode<T>(Element, Head, null);
                 Head.LinkNextNode(Tail);
                 return;
             }
-            if (Tail != null && Head != null) //populated linked list
+            if (Tail != null && Head != null) //populated linked list with an existing head and tail
             {
-                LinkedListNode<T> NewTail = new LinkedListNode<T>(Element, Tail, null);
-                Tail.LinkNextNode(NewTail);
-                Tail = NewTail;
+                LinkedListNode<T> NewTail = new LinkedListNode<T>(Element, Tail, null); //create a new tail node, and link it to the current tail node
+                Tail.LinkNextNode(NewTail); //link the existing tail node to the new tail node
+                Tail = NewTail; //set tail to be the new tail node
                 return;
             }
-            if (Head == null && Tail == null) //empty linked list, adding the head
+            if (Head == null && Tail == null) //empty linked list, adding the head item
             {
                 Tail = null;
-                Head = new LinkedListNode<T>(Element, null, Tail);
+                Head = new LinkedListNode<T>(Element, null, Tail); //set the element to be the new head and link it to the null tail node
             }
         }
+        /// <summary>
+        /// Pops the item at the tail of the linked list
+        /// </summary>
+        /// <returns>The data item held at the tail end of the list</returns>
         public T PopTailItem()
         {
             if (Head == null) //empty linked list
@@ -68,27 +104,30 @@ namespace DSA.Structures
             }
             if (Tail == null) //Head is the last item left
             {
-                T Data = Head.Data;
-                Head = null;
-                return Data;
+                T Data = Head.Data; //set the data variable to hold the data item to return
+                Head = null; //set head node to null
+                return Data; //return this item
             }
             else
             {
-                T Data = Tail.Data;
-                if (Head.NextNode == Tail) //last item is the tail
+                T Data = Tail.Data; //set the data variable to hold data item to return
+                if (Head.NextNode == Tail) //two items in the linked list, head and tail
                 {
-                    Head.UnlinkNextNode();
-                    Tail = null;
+                    Head.UnlinkNextNode(); //unlink the head from the tail
+                    Tail = null; //set tail to null
                 }
-                else
+                else //more than two items
                 {
-                    LinkedListNode<T> NewTail = new LinkedListNode<T>(Tail.PrevItem, Tail.PrevNode, null);
-                    Tail.PrevNode.PrevNode.LinkNextNode(NewTail);
-                    Tail = NewTail;
+                    LinkedListNode<T> NewTail = new LinkedListNode<T>(Tail.PrevData, Tail.PrevNode.PrevNode, null); //set new tail node to hold the data of the current tail's previous node, and set the prevnode to be the prevnode of the current tail's prevnode
+                    Tail = NewTail; //overwrite the tail with newtail
                 }
                 return Data;
             }
         }
+        /// <summary>
+        /// Pops the item at the head of the linked list
+        /// </summary>
+        /// <returns>The data held at the head element of the linked list</returns>
         public T PopHeadItem()
         {
             if (Head == null) //empty linked list
@@ -104,33 +143,40 @@ namespace DSA.Structures
                 }
                 else //there is a tail element
                 {
-                    LinkedListNode<T> NewHead = new LinkedListNode<T>(Head.NextItem, null, Head.NextNode.NextNode);
-                    Head.NextNode.NextNode.LinkPrevNode(NewHead);
-                    Head = NewHead;
+                    if (Head.NextNode == Tail) //two elements in list
+                    {
+                        LinkedListNode<T> NewHead = new LinkedListNode<T>(Tail.Data, null, null); //the new head will be the tail element
+                        Head = NewHead; //set the new head to be the tail
+                        Tail = null; //set tail to null
+                    }
+                    else //more than two items
+                    {
+                        LinkedListNode<T> NewHead = new LinkedListNode<T>(Head.NextData, null, Head.NextNode.NextNode); //setting the new head node to hold the data of the next node of the current head, and link to the head's next node's next node (not the tail, as >2 nodes)
+                        Head.NextNode.NextNode.LinkPrevNode(NewHead); //creating the link between the new head and its next node
+                        Head = NewHead; //overwriting the head with the new head
+                    }
                 }
                 return Data;
             }
         }
-
+        /// <summary>
+        /// Returns the nodes from the current node to the last linked node in order, formatted in string format
+        /// </summary>
+        /// <returns>String of the linked list stemming from this current node until the tail is reached</returns>
         public override string ToString()
         {
-            if (Head == null)
+            if (Head == null) //empty linked list
             {
                 return "Linked list (head to tail): {}";
             }
-            return Head.ToString();
+            return Head.ToString(); //call the traverse back method of the head node - returns the chain of data items from the current node backwards until last node reached, recursively
         }
-
-        
     }
     internal class LinkedListNode<T>
     {
         private LinkedListNode<T> _PrevNode;
         private T _Data;
         private LinkedListNode<T> _NextNode;
-        
-
-
         public LinkedListNode(T Data, LinkedListNode<T> PrevNode, LinkedListNode<T> NextNode)
         {
             this._Data = Data;
@@ -182,7 +228,7 @@ namespace DSA.Structures
             }
         }
 
-        public T PrevItem
+        public T PrevData
         {
             get
             {
@@ -198,14 +244,13 @@ namespace DSA.Structures
             }
         }
 
-        public T NextItem
+        public T NextData
         {
             get
             {
                 return _NextNode.Data;
             }
         }
-
         public LinkedListNode<T> NextNode
         {
             get
@@ -235,8 +280,6 @@ namespace DSA.Structures
                 return _PrevNode.TraverseFull() + " <=> " + _Data.ToString();
             }
         }
-
-
         public override string ToString()
         {
             return "Linked list (head to tail): {" + TraverseBack().ToString() + "}";
@@ -252,7 +295,7 @@ namespace DSA.Structures
             {
                 return false;
             }
-            return a.TraverseFull() == b.TraverseFull();
+            return a.TraverseBack() == b.TraverseBack();
         }
         public static bool operator !=(LinkedListNode<T> a, LinkedListNode<T> b)
         {
@@ -264,7 +307,7 @@ namespace DSA.Structures
             {
                 return true;
             }
-            return a.TraverseFull() != b.TraverseFull();
+            return a.TraverseBack() != b.TraverseBack();
         }
     }
 }
