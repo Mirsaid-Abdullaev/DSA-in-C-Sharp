@@ -13,6 +13,21 @@ namespace DSA.Structures
         private LinkedListNode<T> Head;
         private LinkedListNode<T> Tail;
 
+        public LinkedListNode<T> ListHead
+        {
+            get
+            {
+                return Head;
+            }
+        }
+        public LinkedListNode<T> ListTail
+        {
+            get
+            {
+                return Tail;
+            }
+        }
+
         public LinkedList(T Element)
         {
             Tail = null;
@@ -89,7 +104,7 @@ namespace DSA.Structures
                 }
                 else //there is a tail element
                 {
-                    LinkedListNode<T> NewHead = new LinkedListNode<T>(Head.NextItem, null, Head.NextNode);
+                    LinkedListNode<T> NewHead = new LinkedListNode<T>(Head.NextItem, null, Head.NextNode.NextNode);
                     Head.NextNode.NextNode.LinkPrevNode(NewHead);
                     Head = NewHead;
                 }
@@ -198,7 +213,7 @@ namespace DSA.Structures
                 return this._NextNode;
             }
         }
-        public string Traverse()
+        public string TraverseBack()
         {
             if (_NextNode == null)
             {
@@ -206,30 +221,50 @@ namespace DSA.Structures
             }
             else
             {
-                return _Data.ToString() + " <=> " + _NextNode.Traverse().ToString();
+                return _Data.ToString() + " <=> " + _NextNode.TraverseBack().ToString();
+            }
+        }
+        public string TraverseFull()
+        {
+            if (_PrevNode == null)
+            {
+                return _Data.ToString();
+            }
+            else
+            {
+                return _PrevNode.TraverseFull() + " <=> " + _Data.ToString();
             }
         }
 
+
         public override string ToString()
         {
-            return "Linked list (head to tail): {" + Traverse().ToString() + "}";
+            return "Linked list (head to tail): {" + TraverseBack().ToString() + "}";
         }
 
         public static bool operator ==(LinkedListNode<T> a, LinkedListNode<T> b)
         {
-            if (a.Equals(null) && b.Equals(null))
+            if (a is null && b is null)
             {
                 return true;
             }
-            if ((a.Equals(null) && !b.Equals(null)) || (!a.Equals(null) && b.Equals(null)))
+            if ((a is null && !(b is null)) || (b is null && !(a is null)))
             {
                 return false;
             }
-            return a.Traverse() == b.Traverse();
+            return a.TraverseFull() == b.TraverseFull();
         }
         public static bool operator !=(LinkedListNode<T> a, LinkedListNode<T> b)
         {
-            return a.Traverse() != b.Traverse();
+            if (a is null && b is null)
+            {
+                return false;
+            }
+            if ((a is null && !(b is null)) || (b is null && !(a is null)))
+            {
+                return true;
+            }
+            return a.TraverseFull() != b.TraverseFull();
         }
     }
 }
