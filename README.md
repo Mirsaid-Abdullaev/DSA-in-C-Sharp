@@ -14,4 +14,10 @@ Current contents include: (as of 2nd June 2024)
 <br>
 More code to come over time, added template files for new upcoming code additions to the repository, organised by folder
 
+## Contributing
+Contributions are welcome! Whether you want to add new features, fix bugs, or improve documentation/comments, feel free to submit a pull request.
+
 ### Written by Mirsaid Abdullaev, 2024
+## Contact Details
+### Email: abdullaevm017@gmail.com
+### LinkedIn: www.linkedin.com/in/mirsaid-abdullaev-6a4ab5242/
