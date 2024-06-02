@@ -6,7 +6,7 @@ namespace DSA.Structures
     /// <summary>
     /// Binary tree class for any template type where the type implements the IComparable interface
     /// </summary>
-    internal class BinaryTree<T> where T : IComparable
+    internal class BinaryTree<T> where T : IComparable<T>
     {
         /// <summary>
         /// Class that stores the data of a binary tree node for a binary tree class instance
