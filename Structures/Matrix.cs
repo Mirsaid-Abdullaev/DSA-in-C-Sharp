@@ -2,6 +2,7 @@
 using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace DSA
 {
@@ -13,9 +14,30 @@ namespace DSA.Structures
     internal class Matrix
     {
         private double[][] matrix;
-        public readonly int Rows;
-        public readonly int Cols;
-        public readonly int Size;
+        private int rows;
+        private int cols;
+        private int size;
+        public int Rows
+        {
+            get
+            {
+                return rows;
+            }
+        }
+        public int Cols
+        {
+            get
+            {
+                return cols;
+            }
+        }
+        public int Size
+        {
+            get
+            {
+                return size;
+            }
+        }
 
         /// <summary>
         /// Getter and setter for individual matrix elements
@@ -62,9 +84,9 @@ namespace DSA.Structures
         /// <param name="cols">Number of cols in the matrix</param>
         public Matrix(int rows, int cols)
         {
-            Rows = rows;
-            Cols = cols;
-            Size = Rows * Cols;
+            this.rows = rows;
+            this.cols = cols;
+            this.size = Rows * Cols;
             matrix = new double[Rows][];
             for (int i = 0; i < Rows; i += 1)
             {
@@ -78,9 +100,9 @@ namespace DSA.Structures
         public Matrix(double[][] input)
         {
             matrix = input;
-            Rows = input.Length;
-            Cols = input[0].Length;
-            Size = Rows * Cols;
+            this.rows = input.Length;
+            this.cols = input[0].Length;
+            this.size = Rows * Cols;
         }
         /// <summary>
         /// Resets the matrix instance to default values
@@ -214,6 +236,78 @@ namespace DSA.Structures
             }
         }
         /// <summary>
+        /// Adds a row to the end of the current matrix instance, at index [Rows]
+        /// </summary>
+        public void AddRow()
+        {
+            rows += 1;
+            double[][] temp = new double[rows][];
+            Array.Copy(matrix, temp, rows - 1);
+            temp[rows - 1] = new double[cols];
+            for (int i = 0; i < temp[rows - 1].Length; i++)
+            {
+                temp[rows - 1][i] = 0;
+            }
+            matrix = temp;
+        }
+        /// <summary>
+        /// Deletes a specified column from the matrix instance
+        /// </summary>
+        /// <param name="index">The 0-based index of the row to delete</param>
+        public void DeleteRow(int index)
+        {
+            rows -= 1;
+            if (rows == 0)
+            {
+                matrix = new double[0][];
+                return;
+            }
+            double[][] temp = new double[rows][];
+            Array.Copy(matrix, 0, temp, 0, index); //copies across the rows before the row to delete
+            Array.Copy(matrix, index + 1, temp, index, matrix.Length - index - 1); //copies the rows after the row to delete
+            matrix = temp;
+        }
+        /// <summary>
+        /// Deletes a specified column from the matrix instance
+        /// </summary>
+        /// <param name="index">The 0-based index of the row to delete</param>
+        public void DeleteCol(int index)
+        {
+            cols -= 1;
+            if (cols == 0) //empty matrix
+            {
+                matrix = new double[0][];
+                rows = 0;
+                size = 0;
+                return;
+            }
+            double[][] temp = new double[rows][];
+            for (int i = 0; i < rows; i++)
+            {
+                temp[i] = new double[cols];
+                Array.Copy(matrix[i], 0, temp[i], 0, index);
+                Array.Copy(matrix[i], index + 1, temp[i], index, cols - index); 
+            }
+            matrix = temp;
+        }
+
+        /// <summary>
+        /// Adds a column to the end of the current matrix instance, at index [Cols]
+        /// </summary>
+        public void AddCol()
+        {
+            cols += 1;
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                double[] temp = new double[cols];
+                Array.Copy(matrix[i], temp, cols - 1);
+                temp[^1] = 0; 
+                matrix[i] = temp;
+            }
+        }
+
+
+        /// <summary>
         /// Returns whether a matrix instance is a vector (either column or row)
         /// </summary>
         public bool IsVector()
@@ -321,6 +415,10 @@ namespace DSA.Structures
         /// </summary>
         public override string ToString()
         {
+            if (size == 0)
+            {
+                return "Empty matrix: size is 0, all elements deleted";
+            }
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("["); //start
             for (int i = 0; i < this.Rows; i++)
